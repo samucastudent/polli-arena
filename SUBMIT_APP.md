@@ -24,7 +24,7 @@ Features:
 
 ### App URL
 ```
-https://polli-arena.pages.dev
+https://polli-arena.cloudbr.eu.org
 ```
 *(ou a URL final gerada pelo Cloudflare Pages)*
 
