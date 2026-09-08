@@ -114,11 +114,14 @@ class AuthService {
     return window.crypto.subtle.digest('SHA-256', data);
   }
 
+  public getRedirectUri(): string {
+    return `${window.location.origin}/callback`;
+  }
+
   // Initiate login with Pollinations (BYOP)
   public async login() {
     const clientId = this.getClientId();
-    // Use current URL origin + pathname as exact redirect URI
-    const redirectUri = window.location.origin + window.location.pathname;
+    const redirectUri = this.getRedirectUri();
 
     const verifier = this.generateRandomString(64);
     sessionStorage.setItem(CONFIG.STORAGE_KEYS.PKCE_VERIFIER, verifier);
@@ -152,8 +155,8 @@ class AuthService {
       if (apiKey) {
         this.token = apiKey;
         sessionStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, apiKey);
-        // Clean hash
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        // Clean URL to root
+        window.history.replaceState(null, '', '/');
         await this.fetchUserInfo();
         this.notify();
         return true;
@@ -168,7 +171,7 @@ class AuthService {
 
     const verifier = sessionStorage.getItem(CONFIG.STORAGE_KEYS.PKCE_VERIFIER);
     const clientId = this.getClientId();
-    const redirectUri = window.location.origin + window.location.pathname;
+    const redirectUri = this.getRedirectUri();
 
     try {
       const response = await fetch(`${CONFIG.AUTH_BASE}/api/oauth/token`, {
@@ -195,11 +198,8 @@ class AuthService {
         sessionStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, data.access_token);
         sessionStorage.removeItem(CONFIG.STORAGE_KEYS.PKCE_VERIFIER);
 
-        // Remove OAuth query parameters cleanly from browser URL
-        url.searchParams.delete('code');
-        url.searchParams.delete('state');
-        url.searchParams.delete('session_state');
-        window.history.replaceState(null, '', url.pathname + (url.search ? '?' + url.searchParams.toString() : ''));
+        // Clean URL to root
+        window.history.replaceState(null, '', '/');
 
         await this.fetchUserInfo();
         this.notify();
