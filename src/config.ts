@@ -7,7 +7,7 @@ export const CONFIG = {
   
   // Published App Key for samucastudent
   // Users who authorize will have their usage tracked and grant 25% developer markup
-  DEFAULT_CLIENT_ID: 'pk_polliarena',
+  DEFAULT_CLIENT_ID: 'pk_bcPribtFdhREsbhl',
   
   // Storage keys
   STORAGE_KEYS: {
